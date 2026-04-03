@@ -1,5 +1,22 @@
 static
 gnb_length_t
+gnb_il_get_plmn_id_len 
+(
+    plmn_id_t * p_plmn_id;
+);
+
+
+static
+gnb_return_et
+gnb_il_compose_plmn_id 
+(
+    UInt8 **pp_buffer,
+    plmn_id_t * p_plmn_id
+);
+
+
+static
+gnb_length_t
 gnb_il_get_octet_string_len 
 (
     octet_string_t * p_octet_string;
@@ -29,23 +46,6 @@ gnb_il_compose_rf_parameters
 (
     UInt8 **pp_buffer,
     rf_parameters_t * p_rf_parameters
-);
-
-
-static
-gnb_length_t
-gnb_il_get_plmn_id_len 
-(
-    plmn_id_t * p_plmn_id;
-);
-
-
-static
-gnb_return_et
-gnb_il_compose_plmn_id 
-(
-    UInt8 **pp_buffer,
-    plmn_id_t * p_plmn_id
 );
 
 

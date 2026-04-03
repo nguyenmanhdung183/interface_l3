@@ -256,182 +256,8 @@ def is_numeric(val):
     except (ValueError, TypeError):
         return False
 
-    
-def emit_struct_hardcode(struct_name, struct_def, registry, path, idx_gen):
-    lines = []
-    fields = struct_def["fields"]
 
-    for field in fields:
-        body = []
-        idx = next(idx_gen)
-        name = field["name"]
-        data_type = field["data_type"]
-        child_name = field["child_name"]
-        present = field.get("present")
-        bitmask = field.get("bitmask")
-        is_array = field.get("is_array")
-        length_ref = field.get("length_ref")
-        desc = field.get("description")
-        range_check = field.get("range_check")
-        min_val = to_number(field.get("min"))
-        max_val = to_number(field.get("max"))
-        hc_value = int((max_val + min_val) // 2)
-
-        field_path = f"{path}.{name}"
-
-        if present == "O":#============================================
-            lines.append(f"#if 1 /*idx{idx}: {name} S */\n{{")
-        else:
-            lines.append(f"/* idx{idx}: {name} S */\n{{")
-
-
-        # ================= OPTIONAL =================
-        if present == "O":
-            body.append(f"if ({path}.bitmask & {bitmask})")
-            body.append("{")
-            inner_indent = "\t"
-        else:
-            inner_indent = ""
-
-        # ================= PRIMITIVE =================
-        if data_type == "PRIMITIVE":
-            if is_array:
-                loop = f"idx_{idx}"
-                loop_name = f"{child_name}_index"
-                #size = length_ref if length_ref else field["array_size"]
-                
-                size = None
-                if type(length_ref) in [int, float]:
-                    if length_ref >=0:
-                        size = int(length_ref)
-                    elif type(length_ref) == str and length_ref.isdigit():
-                        size = (length_ref)
-                    else:
-                        size = field["array_size"]
-                else:
-                    size = f"{path}.{length_ref}"
-
-
-                #body.append(f"{inner_indent}for (int {loop_name} = 0; {loop_name} < {size}; {loop_name}++) // array primitive {desc}")
-                #body.append(f"{inner_indent}{{")
-                #body.append(f"{inner_indent}\t{field_path}[{loop_name}] = {hc_value};")
-                body.append(f"{field_path}[] = {{0x01, 0x02}};  // array primitive {desc}")
-                #body.append(f"{inner_indent}}}")
-            else:
-                body.append(f"{inner_indent}{field_path} = {hc_value};")
-
-        # ================= STRUCT =================
-        elif data_type == "STRUCT":
-            child = field["child_type"]
-            child_def = registry["struct_hc"][child]
-
-            if is_array:
-                loop = f"idx_{idx}"
-                loop_name = f"{child_name}_index"
-                #size = length_ref if length_ref else field["array_size"]
-                print_log_info(f"Processing array struct field: {field_path}, length_ref: {length_ref}, typeoflengref: {type(length_ref)}, array_size: {field['array_size']}")
-                # if is_numeric(length_ref):
-                #     size = (length_ref)
-                # else:
-                #     size = field["array_size"]
-                size = None
-                if type(length_ref) in [int, float]:
-                    if length_ref >=0:
-                        size = int(length_ref)
-                    elif type(length_ref) == str and length_ref.isdigit():
-                        size = (length_ref)
-                    else:
-                        size = field["array_size"]
-                else:
-                    size = f"{path}.{length_ref}"
-
-
-                body.append(f"{inner_indent}for (int {loop_name} = 0; {loop_name} < {size}; {loop_name}++) //STRUCT array {desc}")
-                body.append(f"{inner_indent}{{")
-
-                if range_check == "OCTET_STRING" and desc == "FIXED":
-                    # array of octet_string
-                    # body.append(f"{inner_indent}\t{field_path}[{loop_name}].length = 1;")
-                    # body.append(f"{inner_indent}\tfor(int j=0;j<{field_path}[{loop_name}].length;j++) // struct octet fixed")
-                    # body.append(f"{inner_indent}\t{{")
-                    # body.append(f"{inner_indent}\t\t{field_path}[{loop_name}].data[j] = 0; /* change octetstring data here - 1*/")
-                    # body.append(f"{inner_indent}\t}}")
-                    body.append(f"{inner_indent}\tmemset({field_path}[{loop_name}].data, 0, sizeof({field_path}[{loop_name}].data)); /* array of fixed octet string */")
-                elif range_check == "OCTET_STRING" and desc == "VARIABLE":
-                    # array of octet_string
-                    # body.append(f"{inner_indent}\t{field_path}[{loop_name}].length = 1;")
-                    # body.append(f"{inner_indent}\tfor(int j=0;j<{field_path}[{loop_name}].length;j++) // struct octet var")
-                    # body.append(f"{inner_indent}\t{{")
-                    # body.append(f"{inner_indent}\t\t{field_path}[{loop_name}].data[j] = 0; /* change octetstring data here - 3*/")
-                    # body.append(f"{inner_indent}\t}}")
-                    body.append(f"{inner_indent}\tmemset({field_path}[{loop_name}].data, 0, sizeof({field_path}[{loop_name}].data)); /* array of variable octet string */")
-                else:
-                    sub = emit_struct_hardcode(
-                        child,
-                        child_def,
-                        registry,
-                        f"{field_path}[{loop_name}]",
-                        idx_gen
-                    )
-                    sub = "\n".join("\t"+inner_indent+line for line in sub.splitlines())
-                    body.append(sub)
-
-                body.append(f"{inner_indent}}}")
-
-            else: # struct khong phai array 
-                sub = emit_struct_hardcode(
-                    child,
-                    child_def,
-                    registry,
-                    field_path,
-                    idx_gen
-                )
-                sub = "\n".join(inner_indent + line for line in sub.splitlines())
-                body.append(sub)
-
-        # ================= CLOSE OPTIONAL =================
-        if present == "O":
-            body.append("}")
-
-        # indent block
-        body = "\n".join("\t" + line for line in body)
-        lines.append(body)
-        lines.append(f"}}")
-        if present == "O":
-            lines.append(f"#endif /* idx{idx}: {name} E */\n")
-            #lines.append("}")
-        else:
-            # lines.append("}")
-            lines.append(f"/* idx{idx}: {name} E */\n")
-            #lines.append(f"}} /* idx{idx}: {name} E */\n")
-
-    return "\n".join(lines)
-
-def emit_struct_wrapper(struct_name, registry):
-    idx_gen = iter(range(10000))
-
-    struct_def = registry["struct_hc"][struct_name]
-
-    body = emit_struct_hardcode(
-        struct_name,
-        struct_def,
-        registry,
-        f"p_{struct_name.replace('_t','')}",
-        idx_gen
-    )
-    body = body.replace("p_device_config.", "p_device_config->") 
-    body = "".join(body)
-    return f"""
-xnap_return_et assign_hardcode_value_{struct_name}( {struct_name} *p_{struct_name.replace('_t','')} )
-{{
-{indent(body, " " * 4)}
-    return XNAP_SUCCESS;
-}}
-"""
-    
 # ========================= NEW ======================
-
-
 
 # ================= DISPATCH =================
 def handle_emit(field, field_path, registry, idx_gen, indent_lv):
@@ -665,16 +491,186 @@ xnap_return_et assign_hardcode_value_{struct_name}( {struct_name} *{root} )
 """
 
 
+#========================GET====================## ================= TRACE VALUE FULL =================
+
+def get_printf_format(key):
+    if key in ["UI8", "UI16", "UI32"]:
+        return "%u"
+    if key in ["I8", "I16", "I32"]:
+        return "%d"
+    if key in ["UI64"]:
+        return "%llu"
+    if key in ["I64"]:
+        return "%lld"
+    return "%u"
+
+
+# ================= PRIMITIVE =================
+def emit_get_primitive(field, field_path, indent_lv):
+    indent = "\t" * indent_lv
+    lines = []
+
+    key = field.get("key", "UI32")
+    fmt = get_printf_format(key)
+
+    is_array = field["is_array"]
+    range_check = str(field.get("range_check")).upper()
+
+    # ===== OCTET STRING =====
+    if range_check == "OCTET_STRING":
+        lines.append(f'{indent}fprintf(stderr, "[TRACE] {field_path}.length = %u\\n", {field_path}.length);')
+        lines.append(f"{indent}for (int i = 0; i < {field_path}.length; i++)")
+        lines.append(f"{indent}{{")
+        lines.append(f'{indent}\tfprintf(stderr, "[TRACE] {field_path}.data[%d] = 0x%02X\\n", i, {field_path}.data[i]);')
+        lines.append(f"{indent}}}")
+        return lines
+
+    # ===== ARRAY =====
+    if is_array:
+        size = field.get("array_size", 2)
+
+        lines.append(f"{indent}for (int i = 0; i < {size}; i++)")
+        lines.append(f"{indent}{{")
+        lines.append(f'{indent}\tfprintf(stderr, "[TRACE] {field_path}[%d] = {fmt}\\n", i, {field_path}[i]);')
+        lines.append(f"{indent}}}")
+    else:
+        lines.append(f'{indent}fprintf(stderr, "[TRACE] {field_path} = {fmt}\\n", {field_path});')
+
+    return lines
+
+
+# ================= STRUCT =================
+def emit_get_struct(field, field_path, registry, idx_gen, indent_lv):
+    lines = []
+    indent = "\t" * indent_lv
+
+    child = field["child_type"]
+    child_def = registry["struct_hc"][child]
+
+    if field["is_array"]:
+        size = field.get("array_size", 2)
+
+        lines.append(f"{indent}for (int i = 0; i < {size}; i++)")
+        lines.append(f"{indent}{{")
+
+        sub_path = f"{field_path}[i]"
+
+        lines.extend(
+            emit_struct_trace(
+                child,
+                child_def,
+                registry,
+                sub_path,
+                idx_gen,
+                indent_lv + 1
+            )
+        )
+
+        lines.append(f"{indent}}}")
+    else:
+        lines.extend(
+            emit_struct_trace(
+                child,
+                child_def,
+                registry,
+                field_path,
+                idx_gen,
+                indent_lv
+            )
+        )
+
+    return lines
+
+
+# ================= HANDLE =================
+def handle_get(field, field_path, registry, idx_gen, indent_lv):
+    data_type = field["data_type"]
+    present = field.get("present")
+    bitmask = field.get("bitmask")
+
+    indent = "\t" * indent_lv
+    next(idx_gen)
+
+    lines = []
+
+    # ===== OPTIONAL =====
+    if present == "O":
+        lines.append(f"{indent}if ({field_path}.bitmask & {bitmask})")
+        lines.append(f"{indent}{{")
+        inner_lv = indent_lv + 1
+    else:
+        inner_lv = indent_lv
+
+    # ===== DISPATCH =====
+    if data_type == "PRIMITIVE":
+        lines.extend(emit_get_primitive(field, field_path, inner_lv))
+
+    elif data_type == "STRUCT":
+        lines.extend(emit_get_struct(field, field_path, registry, idx_gen, inner_lv))
+
+    else:
+        lines.append(f'{indent}fprintf(stderr, "[TRACE] UNKNOWN: {field_path}\\n");')
+
+    # ===== CLOSE OPTIONAL =====
+    if present == "O":
+        lines.append(f"{indent}}}")
+
+    return lines
+
+
+# ================= RECURSION =================
+def emit_struct_trace(struct_name, struct_def, registry, path, idx_gen, indent_lv):
+    lines = []
+    indent = "\t" * indent_lv
+
+    lines.append(f'{indent}fprintf(stderr, "\\n[TRACE] ===== {struct_name} =====\\n");')
+
+    for field in struct_def["fields"]:
+        field_path = f"{path}.{field['name']}"
+        lines.extend(handle_get(field, field_path, registry, idx_gen, indent_lv))
+
+    return lines
+
+
+# ================= WRAPPER =================
+def get_struct_wrapper(struct_name, registry):
+    idx_gen = iter(range(10000))
+
+    struct_def = registry["struct_hc"][struct_name]
+
+    body_lines = emit_struct_trace(
+        struct_name,
+        struct_def,
+        registry,
+        f"p_{struct_name.replace('_t','')}",
+        idx_gen,
+        1
+    )
+
+    body = "\n".join(body_lines)
+
+    root = f"p_{struct_name.replace('_t','')}"
+    body = body.replace(f"{root}.", f"{root}->")
+
+    return f"""
+#include <stdio.h>
+
+void trace_{struct_name}({struct_name} *{root})
+{{
+{indent(body, " " * 4)}
+}}
+"""
+
 #===============================MAIN============================================
 def main():
     remove_all_data_structs()
     validate_data()
     grouped_structs = gen_data()
     #gen_hardcode_output()
-    # hc = emit_struct_wrapper(ROOT_STRUCT, HARDCODE_REGISTRY)
-    # hc = replace_root_struct(hc, ROOT_STRUCT)
-    # with open(f"{RESULT_FOLDER}/HARD_CODE.c", "w", encoding="utf-8") as f:
-    #     f.write(hc)
+    get_data = get_struct_wrapper(ROOT_STRUCT, HARDCODE_REGISTRY)
+    get_data = replace_root_struct(get_data, ROOT_STRUCT)
+    with open(f"{RESULT_FOLDER}/GET_DATA.c", "w", encoding="utf-8") as f:
+        f.write(get_data)
     
     hc = emit_struct_wrapper(ROOT_STRUCT, HARDCODE_REGISTRY)
     hc = replace_root_struct(hc, ROOT_STRUCT)
