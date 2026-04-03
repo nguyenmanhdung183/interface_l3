@@ -102,7 +102,7 @@ gnb_il_parse_e2sm_rrc_ric_indication
 	
 	/*----> e2_report_mobility_ind_t ~ report_mobility_ind <----*/ 
 	    /* Optional element */
-	    if(p_e2sm_rrc_ric_indication->bitmask & IND_RIC_MOBILITY_REPORT)
+	    if(p_e2sm_rrc_ric_indication->bitmask & IND_RIC_MOBILITY_REPORT_PRESENT)
 	    {
 		    /* Parse/Unpack IE */
 		    if(GNB_FAILURE == gnb_il_parse_e2_report_mobility_ind(

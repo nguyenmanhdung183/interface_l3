@@ -515,14 +515,25 @@ def emit_get_primitive(field, field_path, indent_lv):
 
     is_array = field["is_array"]
     range_check = str(field.get("range_check")).upper()
+    desc = str(field.get("description")).upper()
 
     # ===== OCTET STRING =====
     if range_check == "OCTET_STRING":
-        lines.append(f'{indent}fprintf(stderr, "[TRACE] {field_path}.length = %u\\n", {field_path}.length);')
-        lines.append(f"{indent}for (int i = 0; i < {field_path}.length; i++)")
-        lines.append(f"{indent}{{")
-        lines.append(f'{indent}\tfprintf(stderr, "[TRACE] {field_path}.data[%d] = 0x%02X\\n", i, {field_path}.data[i]);')
-        lines.append(f"{indent}}}")
+        if desc == "FIXED":
+            lines.append(f"{indent}/* {field_path} is an array primitive, fixed length */")
+            #lines.append(f"{indent}fprintf(stderr, \"[TRACE] {field_path}. = %u\\n\", {field_path}.length);")
+            lines.append(f"{indent}for (int i = 0; i < {field_path}.; i++)")
+            lines.append(f"{indent}{{")
+            lines.append(f'{indent}\tfprintf(stderr, "[TRACE] {field_path}.[%d] = 0x%02X\\n", i, {field_path}.data[i]);')
+            lines.append(f"{indent}}}")
+        elif desc == "VARIABLE":
+            lines.append(f"{indent}/* {field_path} is an array primitive, variable length */")
+            #lines.append(f'{indent}fprintf(stderr, "[TRACE] {field_path} = %u\\n", {field_path}.length);')
+            lines.append(f"{indent}for (int i = 0; i < {field_path}; i++)")
+            lines.append(f"{indent}{{")
+            lines.append(f'{indent}\tfprintf(stderr, "[TRACE] {field_path}[%d] = 0x%02X\\n", i, {field_path}.data[i]);')
+            lines.append(f"{indent}}}")
+
         return lines
 
     # ===== ARRAY =====

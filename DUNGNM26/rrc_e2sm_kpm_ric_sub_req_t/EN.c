@@ -130,7 +130,7 @@ gnb_il_get_rrc_e2sm_kpm_ric_sub_req_len
 	
 	/*----> e2_report_mobility_req_t ~ report_mobility_req <----*/ 
 	    /* Optional element */
-	    if(p_rrc_e2sm_kpm_ric_sub_req->bitmask & SUB_RIC_MOBILITY_REPORT)
+	    if(p_rrc_e2sm_kpm_ric_sub_req->bitmask & SUB_RIC_MOBILITY_REPORT_PRESENT)
 	    {
 		    /* Get length of IE */
 		    length += gnb_il_get_e2_report_mobility_req_len(&p_rrc_e2sm_kpm_ric_sub_req->report_mobility_req);
@@ -178,7 +178,7 @@ gnb_il_compose_rrc_e2sm_kpm_ric_sub_req
 	
 	/*----> e2_report_mobility_req_t ~ report_mobility_req <----*/ 
 	    /* Optional element */
-	    if(p_rrc_e2sm_kpm_ric_sub_req->bitmask & SUB_RIC_MOBILITY_REPORT)
+	    if(p_rrc_e2sm_kpm_ric_sub_req->bitmask & SUB_RIC_MOBILITY_REPORT_PRESENT)
 	    {
 		    /* Compose IE */
 		    if(GNB_FAILURE == gnb_il_compose_e2_report_mobility_req(pp_buffer, &p_rrc_e2sm_kpm_ric_sub_req->report_mobility_req))

@@ -1,5 +1,2 @@
-plmn_id_t
-octet_string_t
-band_parameters_t
-rf_parameters_t
-device_config_t
+e2_report_mobility_ind_t
+e2sm_rrc_ric_indication_t

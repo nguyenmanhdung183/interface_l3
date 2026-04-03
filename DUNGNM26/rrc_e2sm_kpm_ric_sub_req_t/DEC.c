@@ -145,7 +145,7 @@ gnb_il_parse_rrc_e2sm_kpm_ric_sub_req
 	
 	/*----> e2_report_mobility_req_t ~ report_mobility_req <----*/ 
 	    /* Optional element */
-	    if(p_rrc_e2sm_kpm_ric_sub_req->bitmask & SUB_RIC_MOBILITY_REPORT)
+	    if(p_rrc_e2sm_kpm_ric_sub_req->bitmask & SUB_RIC_MOBILITY_REPORT_PRESENT)
 	    {
 		    /* Parse/Unpack IE */
 		    if(GNB_FAILURE == gnb_il_parse_e2_report_mobility_req(
