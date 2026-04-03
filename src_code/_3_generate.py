@@ -445,7 +445,7 @@ def handle_emit(field, field_path, registry, idx_gen, indent_lv):
     lines = []
     # ===== START BLOCK =====
     if present == "O":
-        lines.append(f"{indent}#if 1 /*idx{idx}: {name} S */")
+        lines.append(f"{indent}#if 1 /*idx{idx}: {name} - {data_type} - {range_check} --> S */")
         #lines.append(f"{indent}{{")
         #lines.append(f"{indent}\tif ({field_path}.bitmask & {bitmask})")
         lines.append(f"{indent}\t{field_path}.bitmask |= {bitmask}")
@@ -493,6 +493,15 @@ def simple_hc_value(min_val, max_val):
     return int((min_val + max_val) // 2)
 
 
+
+length_ref_map = []
+
+for sheet_name, df in wb.items():
+    df.columns = df.columns.str.strip()
+    for row in df.itertuples(index=False):
+        if isinstance(row.length_ref, str) and row.length_ref != "":
+            length_ref_map.append((row.length_ref))
+
 # ================= PRIMITIVE =================
 def emit_primitive(field, field_path, indent_lv):
     lines = []
@@ -516,6 +525,15 @@ def emit_primitive(field, field_path, indent_lv):
             lines.append(f"{indent}{field_path} = {{0x01, 0x02}}; /* example for octet string array */")
 
     else:
+        # for row in (wb.itertuples()):
+        #     if type(field.get("length_ref")) == str:
+        #         if name == field.get("length_ref"):
+        #             hc_value = row
+        
+        if name in length_ref_map:
+            print_log_info(f"Field {field_path} is a length reference, assigning 0")
+            hc_value = 2
+
         lines.append(f"{indent}{field_path} = {hc_value};")
         
 
@@ -533,7 +551,7 @@ def emit_octet_string(field, field_path, indent_lv):
     targets = [field_path]
 
     if is_array:
-        targets = [f"{field_path}[0]"]
+        targets = [f"{field_path}[0]", f"{field_path}[1]"]
 
     for t in targets:
         if desc == "FIXED":
@@ -559,7 +577,8 @@ def emit_struct(field, field_path, registry, idx_gen, indent_lv):
     targets = [field_path]
 
     if is_array:
-        targets = [f"{field_path}[0]"]
+        #targets = [f"{field_path}[0]"]
+        targets = [f"{field_path}[0]", f"{field_path}[1]"]
 
     for t in targets:
         sub = emit_struct_hardcode(

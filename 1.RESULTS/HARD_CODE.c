@@ -5,70 +5,110 @@ xnap_return_et assign_hardcode_value_device_config_t( device_config_t *p_device_
 	    		p_device_config->version = 127;
 	    			p_device_config->rf_params.bitmask = 0;
 	    			p_device_config->rf_params.id = 500;
-	    			p_device_config->rf_params.num_bands = 0;
+	    			p_device_config->rf_params.num_bands = 2;
 	    				p_device_config->rf_params.bands[0].bitmask = 0;
 	    				p_device_config->rf_params.bands[0].band_id = 1;
 	    				p_device_config->rf_params.bands[0].frequency = 3000;
-	    				#if 1 /*idx21: optional_param_id S */
+	    				#if 1 /*idx21: optional_param_id - PRIMITIVE - H --> S */
 	    					p_device_config->rf_params.bands[0].optional_param_id.bitmask |= BAND_PARAM_BITMASK_OPTIONAL_PARAM_ID_PRESENT
 	    					{
 		    				p_device_config->rf_params.bands[0].optional_param_id = 5;
 	    					}
 	    				#endif /* idx21: optional_param_id E */
 	
-	    				#if 1 /*idx23: optional_param_data S */
+	    				#if 1 /*idx23: optional_param_data - PRIMITIVE - B --> S */
 	    					p_device_config->rf_params.bands[0].optional_param_data.bitmask |= BAND_PARAM_BITMASK_OPTIONAL_PARAM_DATA_PRESENT
 	    					{
 		    				p_device_config->rf_params.bands[0].optional_param_data = 127;
 	    					}
 	    				#endif /* idx23: optional_param_data E */
 	
-	    			#if 1 /*idx25: config_blob S */
+	    				p_device_config->rf_params.bands[1].bitmask = 0;
+	    				p_device_config->rf_params.bands[1].band_id = 1;
+	    				p_device_config->rf_params.bands[1].frequency = 3000;
+	    				#if 1 /*idx31: optional_param_id - PRIMITIVE - H --> S */
+	    					p_device_config->rf_params.bands[1].optional_param_id.bitmask |= BAND_PARAM_BITMASK_OPTIONAL_PARAM_ID_PRESENT
+	    					{
+		    				p_device_config->rf_params.bands[1].optional_param_id = 5;
+	    					}
+	    				#endif /* idx31: optional_param_id E */
+	
+	    				#if 1 /*idx33: optional_param_data - PRIMITIVE - B --> S */
+	    					p_device_config->rf_params.bands[1].optional_param_data.bitmask |= BAND_PARAM_BITMASK_OPTIONAL_PARAM_DATA_PRESENT
+	    					{
+		    				p_device_config->rf_params.bands[1].optional_param_data = 127;
+	    					}
+	    				#endif /* idx33: optional_param_data E */
+	
+	    			#if 1 /*idx35: config_blob - STRUCT - OCTET_STRING --> S */
 	    				p_device_config->rf_params.config_blob.bitmask |= RF_PARAM_BITMASK_CONFIG_BLOB_PRESENT
 	    				{
-		    				p_device_config->rf_params.config_blob[0].length_a = 0;
+		    				p_device_config->rf_params.config_blob[0].length_a = 2;
 		    				/* p_device_config->rf_params.config_blob[0].data_a is an array primitive, assigning variale values */
 	    				p_device_config->rf_params.config_blob[0].data_a = {0x01, 0x02}; /* example for octet string array */
+		    				p_device_config->rf_params.config_blob[1].length_a = 2;
+		    				/* p_device_config->rf_params.config_blob[1].data_a is an array primitive, assigning variale values */
+	    				p_device_config->rf_params.config_blob[1].data_a = {0x01, 0x02}; /* example for octet string array */
 	    				}
-	    			#endif /* idx25: config_blob E */
+	    			#endif /* idx35: config_blob E */
 	
-	    		#if 1 /*idx31: extra_data_config S */
+	    		#if 1 /*idx45: extra_data_config - PRIMITIVE - N --> S */
 	    			p_device_config->extra_data_config.bitmask |= CONFIG_PRESENT
 	    			{
 		    		p_device_config->extra_data_config = 0;
 	    			}
-	    		#endif /* idx31: extra_data_config E */
+	    		#endif /* idx45: extra_data_config E */
 	
-	    		#if 1 /*idx33: extra_data S */
+	    		#if 1 /*idx47: extra_data - STRUCT - OCTET_STRING --> S */
 	    			p_device_config->extra_data.bitmask |= DEVICE_CONFIG_BITMASK_EXTRA_DATA_PRESENT
 	    			{
-		    			p_device_config->extra_data[0].length_a = 0;
+		    			p_device_config->extra_data[0].length_a = 2;
 		    			/* p_device_config->extra_data[0].data_a is an array primitive, assigning variale values */
 	    			p_device_config->extra_data[0].data_a = {0x01, 0x02}; /* example for octet string array */
+		    			p_device_config->extra_data[1].length_a = 2;
+		    			/* p_device_config->extra_data[1].data_a is an array primitive, assigning variale values */
+	    			p_device_config->extra_data[1].data_a = {0x01, 0x02}; /* example for octet string array */
 	    			}
-	    		#endif /* idx33: extra_data E */
+	    		#endif /* idx47: extra_data E */
 	
-	    		p_device_config->band_count = 0;
+	    		p_device_config->band_count = 2;
 	    			p_device_config->band_data[0].bitmask = 0;
 	    			p_device_config->band_data[0].band_id = 1;
 	    			p_device_config->band_data[0].frequency = 3000;
-	    			#if 1 /*idx49: optional_param_id S */
+	    			#if 1 /*idx67: optional_param_id - PRIMITIVE - H --> S */
 	    				p_device_config->band_data[0].optional_param_id.bitmask |= BAND_PARAM_BITMASK_OPTIONAL_PARAM_ID_PRESENT
 	    				{
 		    			p_device_config->band_data[0].optional_param_id = 5;
 	    				}
-	    			#endif /* idx49: optional_param_id E */
+	    			#endif /* idx67: optional_param_id E */
 	
-	    			#if 1 /*idx51: optional_param_data S */
+	    			#if 1 /*idx69: optional_param_data - PRIMITIVE - B --> S */
 	    				p_device_config->band_data[0].optional_param_data.bitmask |= BAND_PARAM_BITMASK_OPTIONAL_PARAM_DATA_PRESENT
 	    				{
 		    			p_device_config->band_data[0].optional_param_data = 127;
 	    				}
-	    			#endif /* idx51: optional_param_data E */
+	    			#endif /* idx69: optional_param_data E */
+	
+	    			p_device_config->band_data[1].bitmask = 0;
+	    			p_device_config->band_data[1].band_id = 1;
+	    			p_device_config->band_data[1].frequency = 3000;
+	    			#if 1 /*idx77: optional_param_id - PRIMITIVE - H --> S */
+	    				p_device_config->band_data[1].optional_param_id.bitmask |= BAND_PARAM_BITMASK_OPTIONAL_PARAM_ID_PRESENT
+	    				{
+		    			p_device_config->band_data[1].optional_param_id = 5;
+	    				}
+	    			#endif /* idx77: optional_param_id E */
+	
+	    			#if 1 /*idx79: optional_param_data - PRIMITIVE - B --> S */
+	    				p_device_config->band_data[1].optional_param_data.bitmask |= BAND_PARAM_BITMASK_OPTIONAL_PARAM_DATA_PRESENT
+	    				{
+		    			p_device_config->band_data[1].optional_param_data = 127;
+	    				}
+	    			#endif /* idx79: optional_param_data E */
 	
 	    		/* p_device_config->list_id is an array primitive, assigning fixed values */
 	    		p_device_config->list_id = {0x01, 0x02}; /* example for octet string array */
-	    			p_device_config->plmn.plmn_count = 0;
+	    			p_device_config->plmn.plmn_count = 2;
 	    			/* p_device_config->plmn.data is an array primitive, assigning variale values */
 	    			p_device_config->plmn.data = {0x01, 0x02}; /* example for octet string array */
 	    return XNAP_SUCCESS;

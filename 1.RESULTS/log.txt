@@ -32,6 +32,7 @@
 [INFO] Processing mandatory field: p_device_config.rf_params.id
 [INFO] Finished processing mandatory field: p_device_config.rf_params.id
 [INFO] Processing mandatory field: p_device_config.rf_params.num_bands
+[INFO] Field p_device_config.rf_params.num_bands is a length reference, assigning 0
 [INFO] Finished processing mandatory field: p_device_config.rf_params.num_bands
 [INFO] Processing mandatory field: p_device_config.rf_params.bands
 [INFO] Processing mandatory field: p_device_config.rf_params.bands[0].bitmask
@@ -40,17 +41,36 @@
 [INFO] Finished processing mandatory field: p_device_config.rf_params.bands[0].band_id
 [INFO] Processing mandatory field: p_device_config.rf_params.bands[0].frequency
 [INFO] Finished processing mandatory field: p_device_config.rf_params.bands[0].frequency
+[INFO] Processing mandatory field: p_device_config.rf_params.bands[1].bitmask
+[INFO] Finished processing mandatory field: p_device_config.rf_params.bands[1].bitmask
+[INFO] Processing mandatory field: p_device_config.rf_params.bands[1].band_id
+[INFO] Finished processing mandatory field: p_device_config.rf_params.bands[1].band_id
+[INFO] Processing mandatory field: p_device_config.rf_params.bands[1].frequency
+[INFO] Finished processing mandatory field: p_device_config.rf_params.bands[1].frequency
 [INFO] Finished processing mandatory field: p_device_config.rf_params.bands
 [INFO] Processing mandatory field: p_device_config.rf_params.config_blob[0].length_a
+[INFO] Field p_device_config.rf_params.config_blob[0].length_a is a length reference, assigning 0
 [INFO] Finished processing mandatory field: p_device_config.rf_params.config_blob[0].length_a
 [INFO] Processing mandatory field: p_device_config.rf_params.config_blob[0].data_a
 [INFO] Finished processing mandatory field: p_device_config.rf_params.config_blob[0].data_a
+[INFO] Processing mandatory field: p_device_config.rf_params.config_blob[1].length_a
+[INFO] Field p_device_config.rf_params.config_blob[1].length_a is a length reference, assigning 0
+[INFO] Finished processing mandatory field: p_device_config.rf_params.config_blob[1].length_a
+[INFO] Processing mandatory field: p_device_config.rf_params.config_blob[1].data_a
+[INFO] Finished processing mandatory field: p_device_config.rf_params.config_blob[1].data_a
 [INFO] Finished processing mandatory field: p_device_config.rf_params
 [INFO] Processing mandatory field: p_device_config.extra_data[0].length_a
+[INFO] Field p_device_config.extra_data[0].length_a is a length reference, assigning 0
 [INFO] Finished processing mandatory field: p_device_config.extra_data[0].length_a
 [INFO] Processing mandatory field: p_device_config.extra_data[0].data_a
 [INFO] Finished processing mandatory field: p_device_config.extra_data[0].data_a
+[INFO] Processing mandatory field: p_device_config.extra_data[1].length_a
+[INFO] Field p_device_config.extra_data[1].length_a is a length reference, assigning 0
+[INFO] Finished processing mandatory field: p_device_config.extra_data[1].length_a
+[INFO] Processing mandatory field: p_device_config.extra_data[1].data_a
+[INFO] Finished processing mandatory field: p_device_config.extra_data[1].data_a
 [INFO] Processing mandatory field: p_device_config.band_count
+[INFO] Field p_device_config.band_count is a length reference, assigning 0
 [INFO] Finished processing mandatory field: p_device_config.band_count
 [INFO] Processing mandatory field: p_device_config.band_data
 [INFO] Processing mandatory field: p_device_config.band_data[0].bitmask
@@ -59,11 +79,18 @@
 [INFO] Finished processing mandatory field: p_device_config.band_data[0].band_id
 [INFO] Processing mandatory field: p_device_config.band_data[0].frequency
 [INFO] Finished processing mandatory field: p_device_config.band_data[0].frequency
+[INFO] Processing mandatory field: p_device_config.band_data[1].bitmask
+[INFO] Finished processing mandatory field: p_device_config.band_data[1].bitmask
+[INFO] Processing mandatory field: p_device_config.band_data[1].band_id
+[INFO] Finished processing mandatory field: p_device_config.band_data[1].band_id
+[INFO] Processing mandatory field: p_device_config.band_data[1].frequency
+[INFO] Finished processing mandatory field: p_device_config.band_data[1].frequency
 [INFO] Finished processing mandatory field: p_device_config.band_data
 [INFO] Processing mandatory field: p_device_config.list_id
 [INFO] Finished processing mandatory field: p_device_config.list_id
 [INFO] Processing mandatory field: p_device_config.plmn
 [INFO] Processing mandatory field: p_device_config.plmn.plmn_count
+[INFO] Field p_device_config.plmn.plmn_count is a length reference, assigning 0
 [INFO] Finished processing mandatory field: p_device_config.plmn.plmn_count
 [INFO] Processing mandatory field: p_device_config.plmn.data
 [INFO] Finished processing mandatory field: p_device_config.plmn.data
