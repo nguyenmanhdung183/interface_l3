@@ -1,7 +1,7 @@
 gnb_return_et
-gnb_xxx_il_send_yyyy_device_config 
+gnb_xxx_il_send_yyyy_rrc_e2sm_kpm_ric_sub_req 
 (
-    device_config_t * p_device_config,
+    rrc_e2sm_kpm_ric_sub_req_t * p_rrc_e2sm_kpm_ric_sub_req,
     UInt16 src_module_id, /* Source module ID */
     UInt16 dest_module_id, /* Destination module ID */
     UInt16 transaction_id, /* Transaction ID */
@@ -12,20 +12,20 @@ gnb_xxx_il_send_yyyy_device_config
 	    UInt16 msg_length, msg_api_length;
 	    UInt8 *p_msg, *p_xxx_msg;
 	
-	    GNB_ASSERT(p_device_config != GNB_PNULL);
+	    GNB_ASSERT(p_rrc_e2sm_kpm_ric_sub_req != GNB_PNULL);
 	
 	    SET_CELL_INDEX(cell_index);
 	
 	    /* Get API length */
-	    msg_length = gnb_il_get_device_config_len(p_device_config);
+	    msg_length = gnb_il_get_rrc_e2sm_kpm_ric_sub_req_len(p_rrc_e2sm_kpm_ric_sub_req);
 	
 	    if (msg_length == GNB_FAILURE)
 	    {
-		        GNB_LOG_ERROR("Failed to get message length for device_config");
+		        GNB_LOG_ERROR("Failed to get message length for rrc_e2sm_kpm_ric_sub_req");
 		        return GNB_FAILURE;
 	    }
 	
-	    GNB_CP_TRACE(GNB_INFO, "Src(%u)->Dst(%u):DEVICE_CONFIG", src_module_id, dest_module_id);
+	    GNB_CP_TRACE(GNB_INFO, "Src(%u)->Dst(%u):RRC_E2SM_KPM_RIC_SUB_REQ", src_module_id, dest_module_id);
 	
 	
 	    msg_api_length = msg_length + GNB_API_HEADER_SIZE + GNB_INTERFACE_API_HEADER_SIZE;
@@ -34,7 +34,7 @@ gnb_xxx_il_send_yyyy_device_config
 	    p_msg = gnb_msg_mem_get(msg_api_length);
 	    if (p_msg == GNB_PNULL)
 	    {
-		        GNB_LOG_ERROR("Failed to allocate memory for device_config message");
+		        GNB_LOG_ERROR("Failed to allocate memory for rrc_e2sm_kpm_ric_sub_req message");
 		        return GNB_FAILURE;
 	    }
 	
@@ -42,25 +42,25 @@ gnb_xxx_il_send_yyyy_device_config
 	    p_xxx_msg = p_msg;
 	
 	    /* fill cspl header */
-	    gnb_construct_api_header(p_xxx_msg, GNB_VERSION_ID, src_module_id, dest_module_id, DEVICE_CONFIG, msg_api_length);
+	    gnb_construct_api_header(p_xxx_msg, GNB_VERSION_ID, src_module_id, dest_module_id, RRC_E2SM_KPM_RIC_SUB_REQ, msg_api_length);
 	
 	    /*fill interface header */
 	    p_xxx_msg += GNB_API_HEADER_SIZE;
 	    gnb_construct_interface_api_header(p_xxx_msg, transaction_id, src_module_id, 
-	        dest_module_id, DEVICE_CONFIG, msg_length, cell_index);
+	        dest_module_id, RRC_E2SM_KPM_RIC_SUB_REQ, msg_length, cell_index);
 	
 	    /* fill message body */
 	    p_xxx_msg += GNB_INTERFACE_API_HEADER_SIZE;
-	    if (GNB_FAILURE == gnb_il_compose_device_config(&p_xxx_msg, p_device_config))
+	    if (GNB_FAILURE == gnb_il_compose_rrc_e2sm_kpm_ric_sub_req(&p_xxx_msg, p_rrc_e2sm_kpm_ric_sub_req))
 	    {
-		        GNB_LOG_ERROR("Failed to compose device_config message");
+		        GNB_LOG_ERROR("Failed to compose rrc_e2sm_kpm_ric_sub_req message");
 		        gnb_msg_mem_free(p_msg);
 		        return GNB_FAILURE;
 	    }
 	
 	    if (p_xxx_msg - msg_api_length != p_msg)
 	    {
-		        GNB_LOG_ERROR("Message length mismatch for device_config: expected %u, actual %u", msg_api_length, (UInt16)(p_xxx_msg - p_msg));
+		        GNB_LOG_ERROR("Message length mismatch for rrc_e2sm_kpm_ric_sub_req: expected %u, actual %u", msg_api_length, (UInt16)(p_xxx_msg - p_msg));
 		        gnb_msg_mem_free(p_msg);
 		        return GNB_FAILURE;
 	    }

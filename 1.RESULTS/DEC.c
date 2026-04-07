@@ -1,8 +1,8 @@
 static
 gnb_return_et
-gnb_il_parse_plmn_id
+gnb_il_parse_rrc_mnc
 (
-    plmn_id_t * p_plmn_id,
+    rrc_mnc_t * p_rrc_mnc,
     UInt8 * p_src,
     SInt32 length_left,
     SInt32 * p_length_read
@@ -10,37 +10,37 @@ gnb_il_parse_plmn_id
 	    SInt32 length_read = 0;
 	    *p_length_read = 0;
 	
-	    memset(p_plmn_id, 0, sizeof(plmn_id_t));
+	    memset(p_rrc_mnc, 0, sizeof(rrc_mnc_t));
 	
-	    /* This function parses plmn_id */
-	    GNB_CP_TRACE(GNB_DETAILEDALL, "dungnm26 - Parsing plmn_id");
+	    /* This function parses rrc_mnc */
+	    GNB_CP_TRACE(GNB_DETAILEDALL, "dungnm26 - Parsing rrc_mnc");
 	
 	
-	/*----> UInt8 ~ plmn_count <----*/ 
+	/*----> UInt8 ~ count <----*/ 
 	    if (*p_length_read + (SInt32)sizeof(UInt8) > length_left)
 	    {
 		        GNB_CP_TRACE(GNB_WARNING, "dungnm26 - Incomming message damaged!");
 		        return GNB_FAILURE;
 	    }
 	    /* Parse/Unpack parameter of basic type */
-	    gnb_cp_unpack_UInt8(&p_plmn_id->plmn_count, p_src + *p_length_read, "plmn_count");
-	    *p_length_read += sizeof(p_plmn_id->plmn_count);
+	    gnb_cp_unpack_UInt8(&p_rrc_mnc->count, p_src + *p_length_read, "count");
+	    *p_length_read += sizeof(p_rrc_mnc->count);
 	    
 	    /* Check for correct range [B - both higher and lower boundary] */
-	    if(p_plmn_id->plmn_count < 0.0 || p_plmn_id->plmn_count > MAX_OCTET_STRING_LEN) 
+	    if(p_rrc_mnc->count < 2.0 || p_rrc_mnc->count > MAX_MNC_OCTET_SIZE) 
 	    {
-		        GNB_CP_TRACE(GNB_WARNING, "dungnm26 - Parameter p_plmn_id->plmn_count should be in range [ 0.0 - MAX_OCTET_STRING_LEN]"
-		            "Incorrect value: %d", p_plmn_id->plmn_count);
+		        GNB_CP_TRACE(GNB_WARNING, "dungnm26 - Parameter p_rrc_mnc->count should be in range [ 2.0 - MAX_MNC_OCTET_SIZE]"
+		            "Incorrect value: %d", p_rrc_mnc->count);
 		        return GNB_FAILURE;
 	    }
 	
-	/*----> UInt8 ~ data <----*/ 
+	/*----> UInt8 ~ mnc <----*/ 
 	    /* Parse OCTET_STRING VARIABLE of basic type elements */
 	    {
 		        gnb_counter_t loop;
-		        for(loop = 0; loop < p_plmn_id->plmn_count; loop++)
+		        for(loop = 0; loop < p_rrc_mnc->count; loop++)
 		        {
-			            gnb_cp_unpack_UInt8((void*)(&p_plmn_id->data[loop]), (void*)(p_src + *p_length_read), "data[]");
+			            gnb_cp_unpack_UInt8((void*)(&p_rrc_mnc->mnc[loop]), (void*)(p_src + *p_length_read), "mnc[]");
 			            *p_length_read += sizeof(UInt8);
 		        }
 	    }
@@ -58,9 +58,9 @@ gnb_il_parse_plmn_id
 
 static
 gnb_return_et
-gnb_il_parse_octet_string
+gnb_il_parse_rrc_plmn_identity
 (
-    octet_string_t * p_octet_string,
+    rrc_plmn_identity_t * p_rrc_plmn_identity,
     UInt8 * p_src,
     SInt32 length_left,
     SInt32 * p_length_read
@@ -68,137 +68,100 @@ gnb_il_parse_octet_string
 	    SInt32 length_read = 0;
 	    *p_length_read = 0;
 	
-	    memset(p_octet_string, 0, sizeof(octet_string_t));
+	    memset(p_rrc_plmn_identity, 0, sizeof(rrc_plmn_identity_t));
 	
-	    /* This function parses octet_string */
-	    GNB_CP_TRACE(GNB_DETAILEDALL, "dungnm26 - Parsing octet_string");
-	
-	
-	/*----> UInt8 ~ length_a <----*/ 
-	    if (*p_length_read + (SInt32)sizeof(UInt8) > length_left)
-	    {
-		        GNB_CP_TRACE(GNB_WARNING, "dungnm26 - Incomming message damaged!");
-		        return GNB_FAILURE;
-	    }
-	    /* Parse/Unpack parameter of basic type */
-	    gnb_cp_unpack_UInt8(&p_octet_string->length_a, p_src + *p_length_read, "length_a");
-	    *p_length_read += sizeof(p_octet_string->length_a);
-	    
-	    /* Check for correct range [B - both higher and lower boundary] */
-	    if(p_octet_string->length_a < 0.0 || p_octet_string->length_a > MAX_OCTET_STRING_LEN) 
-	    {
-		        GNB_CP_TRACE(GNB_WARNING, "dungnm26 - Parameter p_octet_string->length_a should be in range [ 0.0 - MAX_OCTET_STRING_LEN]"
-		            "Incorrect value: %d", p_octet_string->length_a);
-		        return GNB_FAILURE;
-	    }
-	
-	/*----> UInt16 ~ data_a <----*/ 
-	    /* Parse OCTET_STRING VARIABLE of basic type elements */
-	    {
-		        gnb_counter_t loop;
-		        for(loop = 0; loop < p_octet_string->length_a; loop++)
-		        {
-			            gnb_cp_unpack_UInt16((void*)(&p_octet_string->data_a[loop]), (void*)(p_src + *p_length_read), "data_a[]");
-			            *p_length_read += sizeof(UInt16);
-		        }
-	    }
-	
-	/* final check */
-	    if(*p_length_read > length_left)
-	    {
-		        GNB_CP_TRACE(GNB_WARNING, "dungnm26 - Incomming message damaged!");
-		        return GNB_FAILURE;
-	    }
-	
-	    return GNG_SUCCESS;
-}
-
-
-static
-gnb_return_et
-gnb_il_parse_rf_parameters
-(
-    rf_parameters_t * p_rf_parameters,
-    UInt8 * p_src,
-    SInt32 length_left,
-    SInt32 * p_length_read
-){
-	    SInt32 length_read = 0;
-	    *p_length_read = 0;
-	
-	    memset(p_rf_parameters, 0, sizeof(rf_parameters_t));
-	
-	    /* This function parses rf_parameters */
-	    GNB_CP_TRACE(GNB_DETAILEDALL, "dungnm26 - Parsing rf_parameters");
+	    /* This function parses rrc_plmn_identity */
+	    GNB_CP_TRACE(GNB_DETAILEDALL, "dungnm26 - Parsing rrc_plmn_identity");
 	
 	
-	/*----> rrc_bitmask_t ~ bitmask <----*/ 
+	/*----> UInt16 ~ presence_bitmask <----*/ 
 	    if (*p_length_read + (SInt32)sizeof(UInt16) > length_left)
 	    {
 		        GNB_CP_TRACE(GNB_WARNING, "dungnm26 - Incomming message damaged!");
 		        return GNB_FAILURE;
 	    }
 	    /* Parse/Unpack parameter of basic type */
-	    gnb_cp_unpack_UInt16(&p_rf_parameters->bitmask, p_src + *p_length_read, "bitmask");
-	    *p_length_read += sizeof(p_rf_parameters->bitmask);
+	    gnb_cp_unpack_UInt16(&p_rrc_plmn_identity->presence_bitmask, p_src + *p_length_read, "presence_bitmask");
+	    *p_length_read += sizeof(p_rrc_plmn_identity->presence_bitmask);
 	    
 	
-	/*----> UInt16 ~ id <----*/ 
-	    if (*p_length_read + (SInt32)sizeof(UInt16) > length_left)
-	    {
-		        GNB_CP_TRACE(GNB_WARNING, "dungnm26 - Incomming message damaged!");
-		        return GNB_FAILURE;
-	    }
-	    /* Parse/Unpack parameter of basic type */
-	    gnb_cp_unpack_UInt16(&p_rf_parameters->id, p_src + *p_length_read, "id");
-	    *p_length_read += sizeof(p_rf_parameters->id);
-	    
-	
-	/*----> UInt8 ~ num_bands <----*/ 
-	    if (*p_length_read + (SInt32)sizeof(UInt8) > length_left)
-	    {
-		        GNB_CP_TRACE(GNB_WARNING, "dungnm26 - Incomming message damaged!");
-		        return GNB_FAILURE;
-	    }
-	    /* Parse/Unpack parameter of basic type */
-	    gnb_cp_unpack_UInt8(&p_rf_parameters->num_bands, p_src + *p_length_read, "num_bands");
-	    *p_length_read += sizeof(p_rf_parameters->num_bands);
-	    
-	    /* Check for correct range [B - both higher and lower boundary] */
-	    if(p_rf_parameters->num_bands < 0.0 || p_rf_parameters->num_bands > MAX_BANDS) 
-	    {
-		        GNB_CP_TRACE(GNB_WARNING, "dungnm26 - Parameter p_rf_parameters->num_bands should be in range [ 0.0 - MAX_BANDS]"
-		            "Incorrect value: %d", p_rf_parameters->num_bands);
-		        return GNB_FAILURE;
-	    }
-	
-	/*----> band_parameters_t ~ bands <----*/ 
-	    
-	    /* Parse OCTET_STRING VARIABLE of IE */
-	    {
-		        gnb_counter_t loop;
-		        for(loop = 0; loop < p_rf_parameters->num_bands; loop++)
-		        {
-			            if(GNB_FAILURE == gnb_il_parse_band_parameters(
-			                &p_rf_parameters->bands[loop], 
-			                p_src + *p_length_read, 
-			                length_left - *p_length_read,
-			                &length_read))
-			            {
-				                return GNB_FAILURE;
-			            }
-			            *p_length_read += length_read;
-		        }
-	    }
-	
-	/*----> octet_string_t ~ config_blob <----*/ 
+	/*----> UInt8 ~ mcc <----*/ 
 	    /* Optional element */
-	    if(p_rf_parameters->bitmask & RF_PARAM_BITMASK_CONFIG_BLOB_PRESENT)
+	    if(p_rrc_plmn_identity->bitmask & PLMN_IDENTITY_MCC_PRESENCE_FLAG)
 	    {
 		    /* Parse of OCTET_STRING FIXED of basic type elements */
 		    {
-			        :))))
+			        gnb_counter_t loop;
+			        for(loop = 0; loop < ARRSIZE(p_rrc_plmn_identity->mcc); loop++)
+			        {
+				            gnb_cp_unpack_UInt8((void*)(&p_rrc_plmn_identity->mcc[loop]), (void*)(p_src + *p_length_read), "mcc[]");
+				            *p_length_read += sizeof(UInt8);
+			        }
 		    }
+	    }
+	
+	/*----> rrc_mnc_t ~ mnc <----*/ 
+	    /* Parse/Unpack IE */
+	    if(GNB_FAILURE == gnb_il_parse_rrc_mnc(
+	        &p_rrc_plmn_identity->mnc, 
+	        p_src + *p_length_read, 
+	        length_left - *p_length_read,
+	        &length_read))
+	    {
+		        return GNB_FAILURE;
+	    }
+	
+	    *p_length_read += length_read;
+	
+	/* final check */
+	    if(*p_length_read > length_left)
+	    {
+		        GNB_CP_TRACE(GNB_WARNING, "dungnm26 - Incomming message damaged!");
+		        return GNB_FAILURE;
+	    }
+	
+	    return GNG_SUCCESS;
+}
+
+
+static
+gnb_return_et
+gnb_il_parse_rrc_nr_cell_identity
+(
+    rrc_nr_cell_identity_t * p_rrc_nr_cell_identity,
+    UInt8 * p_src,
+    SInt32 length_left,
+    SInt32 * p_length_read
+){
+	    SInt32 length_read = 0;
+	    *p_length_read = 0;
+	
+	    memset(p_rrc_nr_cell_identity, 0, sizeof(rrc_nr_cell_identity_t));
+	
+	    /* This function parses rrc_nr_cell_identity */
+	    GNB_CP_TRACE(GNB_DETAILEDALL, "dungnm26 - Parsing rrc_nr_cell_identity");
+	
+	
+	/*----> UInt32 ~ numbits <----*/ 
+	    if (*p_length_read + (SInt32)sizeof(UInt32) > length_left)
+	    {
+		        GNB_CP_TRACE(GNB_WARNING, "dungnm26 - Incomming message damaged!");
+		        return GNB_FAILURE;
+	    }
+	    /* Parse/Unpack parameter of basic type */
+	    gnb_cp_unpack_UInt32(&p_rrc_nr_cell_identity->numbits, p_src + *p_length_read, "numbits");
+	    *p_length_read += sizeof(p_rrc_nr_cell_identity->numbits);
+	    
+	
+	/*----> UInt8 ~ data <----*/ 
+	    /* Parse OCTET_STRING VARIABLE of basic type elements */
+	    {
+		        gnb_counter_t loop;
+		        for(loop = 0; loop < p_rrc_nr_cell_identity->numbits; loop++)
+		        {
+			            gnb_cp_unpack_UInt8((void*)(&p_rrc_nr_cell_identity->data[loop]), (void*)(p_src + *p_length_read), "data[]");
+			            *p_length_read += sizeof(UInt8);
+		        }
 	    }
 	
 	/* final check */
@@ -214,9 +177,9 @@ gnb_il_parse_rf_parameters
 
 static
 gnb_return_et
-gnb_il_parse_device_config
+gnb_il_parse_rrc_ncgi
 (
-    device_config_t * p_device_config,
+    rrc_ncgi_t * p_rrc_ncgi,
     UInt8 * p_src,
     SInt32 length_left,
     SInt32 * p_length_read
@@ -224,10 +187,148 @@ gnb_il_parse_device_config
 	    SInt32 length_read = 0;
 	    *p_length_read = 0;
 	
-	    memset(p_device_config, 0, sizeof(device_config_t));
+	    memset(p_rrc_ncgi, 0, sizeof(rrc_ncgi_t));
 	
-	    /* This function parses device_config */
-	    GNB_CP_TRACE(GNB_DETAILEDALL, "dungnm26 - Parsing device_config");
+	    /* This function parses rrc_ncgi */
+	    GNB_CP_TRACE(GNB_DETAILEDALL, "dungnm26 - Parsing rrc_ncgi");
+	
+	
+	/*----> rrc_plmn_identity_t ~ plmn_identity <----*/ 
+	    /* Parse/Unpack IE */
+	    if(GNB_FAILURE == gnb_il_parse_rrc_plmn_identity(
+	        &p_rrc_ncgi->plmn_identity, 
+	        p_src + *p_length_read, 
+	        length_left - *p_length_read,
+	        &length_read))
+	    {
+		        return GNB_FAILURE;
+	    }
+	
+	    *p_length_read += length_read;
+	
+	/*----> rrc_nr_cell_identity_t ~ nr_cell_identity <----*/ 
+	    /* Parse/Unpack IE */
+	    if(GNB_FAILURE == gnb_il_parse_rrc_nr_cell_identity(
+	        &p_rrc_ncgi->nr_cell_identity, 
+	        p_src + *p_length_read, 
+	        length_left - *p_length_read,
+	        &length_read))
+	    {
+		        return GNB_FAILURE;
+	    }
+	
+	    *p_length_read += length_read;
+	
+	/* final check */
+	    if(*p_length_read > length_left)
+	    {
+		        GNB_CP_TRACE(GNB_WARNING, "dungnm26 - Incomming message damaged!");
+		        return GNB_FAILURE;
+	    }
+	
+	    return GNG_SUCCESS;
+}
+
+
+static
+gnb_return_et
+gnb_il_parse_e2_report_mobility_req
+(
+    e2_report_mobility_req_t * p_e2_report_mobility_req,
+    UInt8 * p_src,
+    SInt32 length_left,
+    SInt32 * p_length_read
+){
+	    SInt32 length_read = 0;
+	    *p_length_read = 0;
+	
+	    memset(p_e2_report_mobility_req, 0, sizeof(e2_report_mobility_req_t));
+	
+	    /* This function parses e2_report_mobility_req */
+	    GNB_CP_TRACE(GNB_DETAILEDALL, "dungnm26 - Parsing e2_report_mobility_req");
+	
+	
+	/*----> UInt8 ~ is_ho_attempt <----*/ 
+	    if (*p_length_read + (SInt32)sizeof(UInt8) > length_left)
+	    {
+		        GNB_CP_TRACE(GNB_WARNING, "dungnm26 - Incomming message damaged!");
+		        return GNB_FAILURE;
+	    }
+	    /* Parse/Unpack parameter of basic type */
+	    gnb_cp_unpack_UInt8(&p_e2_report_mobility_req->is_ho_attempt, p_src + *p_length_read, "is_ho_attempt");
+	    *p_length_read += sizeof(p_e2_report_mobility_req->is_ho_attempt);
+	    
+	    /* Check for correct range [B - both higher and lower boundary] */
+	    if(p_e2_report_mobility_req->is_ho_attempt < 0.0 || p_e2_report_mobility_req->is_ho_attempt > 1) 
+	    {
+		        GNB_CP_TRACE(GNB_WARNING, "dungnm26 - Parameter p_e2_report_mobility_req->is_ho_attempt should be in range [ 0.0 - 1]"
+		            "Incorrect value: %d", p_e2_report_mobility_req->is_ho_attempt);
+		        return GNB_FAILURE;
+	    }
+	
+	/*----> UInt8 ~ is_ho_succ <----*/ 
+	    if (*p_length_read + (SInt32)sizeof(UInt8) > length_left)
+	    {
+		        GNB_CP_TRACE(GNB_WARNING, "dungnm26 - Incomming message damaged!");
+		        return GNB_FAILURE;
+	    }
+	    /* Parse/Unpack parameter of basic type */
+	    gnb_cp_unpack_UInt8(&p_e2_report_mobility_req->is_ho_succ, p_src + *p_length_read, "is_ho_succ");
+	    *p_length_read += sizeof(p_e2_report_mobility_req->is_ho_succ);
+	    
+	    /* Check for correct range [B - both higher and lower boundary] */
+	    if(p_e2_report_mobility_req->is_ho_succ < 0.0 || p_e2_report_mobility_req->is_ho_succ > 1) 
+	    {
+		        GNB_CP_TRACE(GNB_WARNING, "dungnm26 - Parameter p_e2_report_mobility_req->is_ho_succ should be in range [ 0.0 - 1]"
+		            "Incorrect value: %d", p_e2_report_mobility_req->is_ho_succ);
+		        return GNB_FAILURE;
+	    }
+	
+	/*----> UInt8 ~ is_ho_failure <----*/ 
+	    if (*p_length_read + (SInt32)sizeof(UInt8) > length_left)
+	    {
+		        GNB_CP_TRACE(GNB_WARNING, "dungnm26 - Incomming message damaged!");
+		        return GNB_FAILURE;
+	    }
+	    /* Parse/Unpack parameter of basic type */
+	    gnb_cp_unpack_UInt8(&p_e2_report_mobility_req->is_ho_failure, p_src + *p_length_read, "is_ho_failure");
+	    *p_length_read += sizeof(p_e2_report_mobility_req->is_ho_failure);
+	    
+	    /* Check for correct range [B - both higher and lower boundary] */
+	    if(p_e2_report_mobility_req->is_ho_failure < 0.0 || p_e2_report_mobility_req->is_ho_failure > 1) 
+	    {
+		        GNB_CP_TRACE(GNB_WARNING, "dungnm26 - Parameter p_e2_report_mobility_req->is_ho_failure should be in range [ 0.0 - 1]"
+		            "Incorrect value: %d", p_e2_report_mobility_req->is_ho_failure);
+		        return GNB_FAILURE;
+	    }
+	
+	/* final check */
+	    if(*p_length_read > length_left)
+	    {
+		        GNB_CP_TRACE(GNB_WARNING, "dungnm26 - Incomming message damaged!");
+		        return GNB_FAILURE;
+	    }
+	
+	    return GNG_SUCCESS;
+}
+
+
+static
+gnb_return_et
+gnb_il_parse_e2ap_ric_action_list
+(
+    e2ap_ric_action_list_t * p_e2ap_ric_action_list,
+    UInt8 * p_src,
+    SInt32 length_left,
+    SInt32 * p_length_read
+){
+	    SInt32 length_read = 0;
+	    *p_length_read = 0;
+	
+	    memset(p_e2ap_ric_action_list, 0, sizeof(e2ap_ric_action_list_t));
+	
+	    /* This function parses e2ap_ric_action_list */
+	    GNB_CP_TRACE(GNB_DETAILEDALL, "dungnm26 - Parsing e2ap_ric_action_list");
 	
 	
 	/*----> UInt16 ~ bitmask <----*/ 
@@ -237,32 +338,54 @@ gnb_il_parse_device_config
 		        return GNB_FAILURE;
 	    }
 	    /* Parse/Unpack parameter of basic type */
-	    gnb_cp_unpack_UInt16(&p_device_config->bitmask, p_src + *p_length_read, "bitmask");
-	    *p_length_read += sizeof(p_device_config->bitmask);
+	    gnb_cp_unpack_UInt16(&p_e2ap_ric_action_list->bitmask, p_src + *p_length_read, "bitmask");
+	    *p_length_read += sizeof(p_e2ap_ric_action_list->bitmask);
 	    
 	
-	/*----> UInt8 ~ version <----*/ 
+	/*----> UInt32 ~ report_period_ms <----*/ 
+	    if (*p_length_read + (SInt32)sizeof(UInt32) > length_left)
+	    {
+		        GNB_CP_TRACE(GNB_WARNING, "dungnm26 - Incomming message damaged!");
+		        return GNB_FAILURE;
+	    }
+	    /* Parse/Unpack parameter of basic type */
+	    gnb_cp_unpack_UInt32(&p_e2ap_ric_action_list->report_period_ms, p_src + *p_length_read, "report_period_ms");
+	    *p_length_read += sizeof(p_e2ap_ric_action_list->report_period_ms);
+	    
+	
+	/*----> UInt32 ~ action_id <----*/ 
+	    if (*p_length_read + (SInt32)sizeof(UInt32) > length_left)
+	    {
+		        GNB_CP_TRACE(GNB_WARNING, "dungnm26 - Incomming message damaged!");
+		        return GNB_FAILURE;
+	    }
+	    /* Parse/Unpack parameter of basic type */
+	    gnb_cp_unpack_UInt32(&p_e2ap_ric_action_list->action_id, p_src + *p_length_read, "action_id");
+	    *p_length_read += sizeof(p_e2ap_ric_action_list->action_id);
+	    
+	
+	/*----> UInt8 ~ action_type <----*/ 
 	    if (*p_length_read + (SInt32)sizeof(UInt8) > length_left)
 	    {
 		        GNB_CP_TRACE(GNB_WARNING, "dungnm26 - Incomming message damaged!");
 		        return GNB_FAILURE;
 	    }
 	    /* Parse/Unpack parameter of basic type */
-	    gnb_cp_unpack_UInt8(&p_device_config->version, p_src + *p_length_read, "version");
-	    *p_length_read += sizeof(p_device_config->version);
+	    gnb_cp_unpack_UInt8(&p_e2ap_ric_action_list->action_type, p_src + *p_length_read, "action_type");
+	    *p_length_read += sizeof(p_e2ap_ric_action_list->action_type);
 	    
-	    /* Check for correct range [B - both higher and lower boundary] */
-	    if(p_device_config->version < 0.0 || p_device_config->version > 255) 
+	    /* Check for correct range [L - lower boundary] */
+	    if(p_e2ap_ric_action_list->action_type < 0.0)
 	    {
-		        GNB_CP_TRACE(GNB_WARNING, "dungnm26 - Parameter p_device_config->version should be in range [ 0.0 - 255]"
-		            "Incorrect value: %d", p_device_config->version);
+		        GNB_CP_TRACE(GNB_WARNING, "dungnm26 - Parameter p_e2ap_ric_action_list->action_type should be greater than or equal to 0.0"
+		            "Incorrect value: %d", p_e2ap_ric_action_list->action_type);
 		        return GNB_FAILURE;
 	    }
 	
-	/*----> rf_parameters_t ~ rf_params <----*/ 
+	/*----> rrc_ncgi_t ~ nr_cgi <----*/ 
 	    /* Parse/Unpack IE */
-	    if(GNB_FAILURE == gnb_il_parse_rf_parameters(
-	        &p_device_config->rf_params, 
+	    if(GNB_FAILURE == gnb_il_parse_rrc_ncgi(
+	        &p_e2ap_ric_action_list->nr_cgi, 
 	        p_src + *p_length_read, 
 	        length_left - *p_length_read,
 	        &length_read))
@@ -272,58 +395,105 @@ gnb_il_parse_device_config
 	
 	    *p_length_read += length_read;
 	
-	/*----> UInt8 ~ extra_data_config <----*/ 
+	/*----> e2_report_mobility_req_t ~ report_mobility_req <----*/ 
 	    /* Optional element */
-	    if(p_device_config->bitmask & CONFIG_PRESENT)
+	    if(p_e2ap_ric_action_list->bitmask & E2AP_REPORT_MOBILITY)
 	    {
-		    if (*p_length_read + (SInt32)sizeof(UInt8) > length_left)
+		    /* Parse/Unpack IE */
+		    if(GNB_FAILURE == gnb_il_parse_e2_report_mobility_req(
+		        &p_e2ap_ric_action_list->report_mobility_req, 
+		        p_src + *p_length_read, 
+		        length_left - *p_length_read,
+		        &length_read))
 		    {
-			        GNB_CP_TRACE(GNB_WARNING, "dungnm26 - Incomming message damaged!");
 			        return GNB_FAILURE;
 		    }
-		    /* Parse/Unpack parameter of basic type */
-		    gnb_cp_unpack_UInt8(&p_device_config->extra_data_config, p_src + *p_length_read, "extra_data_config");
-		    *p_length_read += sizeof(p_device_config->extra_data_config);
-		    
+		
+		    *p_length_read += length_read;
 	    }
 	
-	/*----> octet_string_t ~ extra_data <----*/ 
-	    /* Optional element */
-	    if(p_device_config->bitmask & DEVICE_CONFIG_BITMASK_EXTRA_DATA_PRESENT)
+	/* final check */
+	    if(*p_length_read > length_left)
 	    {
-		    /* Parse of OCTET_STRING FIXED of basic type elements */
-		    {
-			        :))))
-		    }
+		        GNB_CP_TRACE(GNB_WARNING, "dungnm26 - Incomming message damaged!");
+		        return GNB_FAILURE;
 	    }
 	
-	/*----> UInt16 ~ band_count <----*/ 
+	    return GNG_SUCCESS;
+}
+
+
+static
+gnb_return_et
+gnb_il_parse_rrc_e2sm_kpm_ric_sub_req
+(
+    rrc_e2sm_kpm_ric_sub_req_t * p_rrc_e2sm_kpm_ric_sub_req,
+    UInt8 * p_src,
+    SInt32 length_left,
+    SInt32 * p_length_read
+){
+	    SInt32 length_read = 0;
+	    *p_length_read = 0;
+	
+	    memset(p_rrc_e2sm_kpm_ric_sub_req, 0, sizeof(rrc_e2sm_kpm_ric_sub_req_t));
+	
+	    /* This function parses rrc_e2sm_kpm_ric_sub_req */
+	    GNB_CP_TRACE(GNB_DETAILEDALL, "dungnm26 - Parsing rrc_e2sm_kpm_ric_sub_req");
+	
+	
+	/*----> UInt32 ~ ric_request_id <----*/ 
+	    if (*p_length_read + (SInt32)sizeof(UInt32) > length_left)
+	    {
+		        GNB_CP_TRACE(GNB_WARNING, "dungnm26 - Incomming message damaged!");
+		        return GNB_FAILURE;
+	    }
+	    /* Parse/Unpack parameter of basic type */
+	    gnb_cp_unpack_UInt32(&p_rrc_e2sm_kpm_ric_sub_req->ric_request_id, p_src + *p_length_read, "ric_request_id");
+	    *p_length_read += sizeof(p_rrc_e2sm_kpm_ric_sub_req->ric_request_id);
+	    
+	
+	/*----> UInt16 ~ ran_function_id <----*/ 
 	    if (*p_length_read + (SInt32)sizeof(UInt16) > length_left)
 	    {
 		        GNB_CP_TRACE(GNB_WARNING, "dungnm26 - Incomming message damaged!");
 		        return GNB_FAILURE;
 	    }
 	    /* Parse/Unpack parameter of basic type */
-	    gnb_cp_unpack_UInt16(&p_device_config->band_count, p_src + *p_length_read, "band_count");
-	    *p_length_read += sizeof(p_device_config->band_count);
+	    gnb_cp_unpack_UInt16(&p_rrc_e2sm_kpm_ric_sub_req->ran_function_id, p_src + *p_length_read, "ran_function_id");
+	    *p_length_read += sizeof(p_rrc_e2sm_kpm_ric_sub_req->ran_function_id);
 	    
-	    /* Check for correct range [B - both higher and lower boundary] */
-	    if(p_device_config->band_count < 0.0 || p_device_config->band_count > MAX_COUNT) 
+	
+	/*----> UInt8 ~ num_action <----*/ 
+	    if (*p_length_read + (SInt32)sizeof(UInt8) > length_left)
 	    {
-		        GNB_CP_TRACE(GNB_WARNING, "dungnm26 - Parameter p_device_config->band_count should be in range [ 0.0 - MAX_COUNT]"
-		            "Incorrect value: %d", p_device_config->band_count);
+		        GNB_CP_TRACE(GNB_WARNING, "dungnm26 - Incomming message damaged!");
 		        return GNB_FAILURE;
 	    }
+	    /* Parse/Unpack parameter of basic type */
+	    gnb_cp_unpack_UInt8(&p_rrc_e2sm_kpm_ric_sub_req->num_action, p_src + *p_length_read, "num_action");
+	    *p_length_read += sizeof(p_rrc_e2sm_kpm_ric_sub_req->num_action);
+	    
 	
-	/*----> band_parameters_t ~ band_data <----*/ 
+	/*----> UInt8 ~ periodic <----*/ 
+	    if (*p_length_read + (SInt32)sizeof(UInt8) > length_left)
+	    {
+		        GNB_CP_TRACE(GNB_WARNING, "dungnm26 - Incomming message damaged!");
+		        return GNB_FAILURE;
+	    }
+	    /* Parse/Unpack parameter of basic type */
+	    gnb_cp_unpack_UInt8(&p_rrc_e2sm_kpm_ric_sub_req->periodic, p_src + *p_length_read, "periodic");
+	    *p_length_read += sizeof(p_rrc_e2sm_kpm_ric_sub_req->periodic);
+	    
+	
+	/*----> e2ap_ric_action_list_t ~ action_list <----*/ 
 	    
 	    /* Parse OCTET_STRING VARIABLE of IE */
 	    {
 		        gnb_counter_t loop;
-		        for(loop = 0; loop < p_device_config->band_count; loop++)
+		        for(loop = 0; loop < p_rrc_e2sm_kpm_ric_sub_req->num_action; loop++)
 		        {
-			            if(GNB_FAILURE == gnb_il_parse_band_parameters(
-			                &p_device_config->band_data[loop], 
+			            if(GNB_FAILURE == gnb_il_parse_e2ap_ric_action_list(
+			                &p_rrc_e2sm_kpm_ric_sub_req->action_list[loop], 
 			                p_src + *p_length_read, 
 			                length_left - *p_length_read,
 			                &length_read))
@@ -333,30 +503,6 @@ gnb_il_parse_device_config
 			            *p_length_read += length_read;
 		        }
 	    }
-	
-	/*----> UInt8 ~ list_id <----*/ 
-	    /* Parse of OCTET_STRING FIXED of basic type elements */
-	    {
-		        gnb_counter_t loop;
-		        for(loop = 0; loop < ARRSIZE(p_device_config->list_id); loop++)
-		        {
-			            gnb_cp_unpack_UInt8((void*)(&p_device_config->list_id[loop]), (void*)(p_src + *p_length_read), "list_id[]");
-			            *p_length_read += sizeof(UInt8);
-		        }
-	    }
-	
-	/*----> plmn_id_t ~ plmn <----*/ 
-	    /* Parse/Unpack IE */
-	    if(GNB_FAILURE == gnb_il_parse_plmn_id(
-	        &p_device_config->plmn, 
-	        p_src + *p_length_read, 
-	        length_left - *p_length_read,
-	        &length_read))
-	    {
-		        return GNB_FAILURE;
-	    }
-	
-	    *p_length_read += length_read;
 	
 	/* final check */
 	    if(*p_length_read > length_left)

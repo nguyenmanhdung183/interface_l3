@@ -1,126 +1,69 @@
 
-xnap_return_et assign_hardcode_value_device_config_t( device_config_t *p_device_config )
+xnap_return_et assign_hardcode_value_rrc_e2sm_kpm_ric_sub_req_t( rrc_e2sm_kpm_ric_sub_req_t *p_rrc_e2sm_kpm_ric_sub_req )
 {
-	    		p_device_config->bitmask = 0;
-	    		p_device_config->version = 127;
-	    			p_device_config->rf_params.bitmask = 0;
-	    			p_device_config->rf_params.id = 500;
-	    			p_device_config->rf_params.num_bands = 2;
-	    				p_device_config->rf_params.bands[0].bitmask = 0;
-	    				p_device_config->rf_params.bands[0].band_id = 1;
-	    				p_device_config->rf_params.bands[0].frequency = 3000;
+	    		p_rrc_e2sm_kpm_ric_sub_req->ric_request_id = 0;
+	    		p_rrc_e2sm_kpm_ric_sub_req->ran_function_id = 0;
+	    		p_rrc_e2sm_kpm_ric_sub_req->num_action = 2;
+	    		p_rrc_e2sm_kpm_ric_sub_req->periodic = 0;
+	    			p_rrc_e2sm_kpm_ric_sub_req->action_list[0].bitmask = 0;
+	    			p_rrc_e2sm_kpm_ric_sub_req->action_list[0].report_period_ms = 0;
+	    			p_rrc_e2sm_kpm_ric_sub_req->action_list[0].action_id = 0;
+	    			p_rrc_e2sm_kpm_ric_sub_req->action_list[0].action_type = 0;
+	    					p_rrc_e2sm_kpm_ric_sub_req->action_list[0].nr_cgi.plmn_identity.presence_bitmask = 0;
 	
-	    			#if 1 /*idx20: optional_param_id S */
-	    				if (p_device_config->rf_params.bands[0].bitmask & BAND_PARAM_BITMASK_OPTIONAL_PARAM_ID_PRESENT)
-	    				{
-		    				p_device_config->rf_params.bands[0].optional_param_id = 5;
-	    				}
-	    			#endif /* idx20: optional_param_id E */
+	    				#if 1 /*idx24: mcc S */
+	    					if (p_rrc_e2sm_kpm_ric_sub_req->action_list[0].nr_cgi.plmn_identity.bitmask & PLMN_IDENTITY_MCC_PRESENCE_FLAG)
+	    					{
+		    					/* p_rrc_e2sm_kpm_ric_sub_req->action_list[0].nr_cgi.plmn_identity.mcc is an array primitive, assigning fixed values */
+	    					p_rrc_e2sm_kpm_ric_sub_req->action_list[0].nr_cgi.plmn_identity.mcc = {0x01, 0x02}; /* example for octet string array */
+	    					}
+	    				#endif /* idx24: mcc E */
 	
+	    						p_rrc_e2sm_kpm_ric_sub_req->action_list[0].nr_cgi.plmn_identity.mnc.count = 2;
+	    						/* p_rrc_e2sm_kpm_ric_sub_req->action_list[0].nr_cgi.plmn_identity.mnc.mnc is an array primitive, assigning variale values */
+	    						p_rrc_e2sm_kpm_ric_sub_req->action_list[0].nr_cgi.plmn_identity.mnc.mnc = {0x01, 0x02}; /* example for octet string array */
+	    					p_rrc_e2sm_kpm_ric_sub_req->action_list[0].nr_cgi.nr_cell_identity.numbits = 2;
+	    					/* p_rrc_e2sm_kpm_ric_sub_req->action_list[0].nr_cgi.nr_cell_identity.data is an array primitive, assigning variale values */
+	    					p_rrc_e2sm_kpm_ric_sub_req->action_list[0].nr_cgi.nr_cell_identity.data = {0x01, 0x02}; /* example for octet string array */
 	
-	    			#if 1 /*idx22: optional_param_data S */
-	    				if (p_device_config->rf_params.bands[0].bitmask & BAND_PARAM_BITMASK_OPTIONAL_PARAM_DATA_PRESENT)
-	    				{
-		    				p_device_config->rf_params.bands[0].optional_param_data = 127;
-	    				}
-	    			#endif /* idx22: optional_param_data E */
-	
-	    				p_device_config->rf_params.bands[1].bitmask = 0;
-	    				p_device_config->rf_params.bands[1].band_id = 1;
-	    				p_device_config->rf_params.bands[1].frequency = 3000;
-	
-	    			#if 1 /*idx30: optional_param_id S */
-	    				if (p_device_config->rf_params.bands[1].bitmask & BAND_PARAM_BITMASK_OPTIONAL_PARAM_ID_PRESENT)
-	    				{
-		    				p_device_config->rf_params.bands[1].optional_param_id = 5;
-	    				}
-	    			#endif /* idx30: optional_param_id E */
-	
-	
-	    			#if 1 /*idx32: optional_param_data S */
-	    				if (p_device_config->rf_params.bands[1].bitmask & BAND_PARAM_BITMASK_OPTIONAL_PARAM_DATA_PRESENT)
-	    				{
-		    				p_device_config->rf_params.bands[1].optional_param_data = 127;
-	    				}
-	    			#endif /* idx32: optional_param_data E */
-	
-	
-	    		#if 1 /*idx34: config_blob S */
-	    			if (p_device_config->rf_params.bitmask & RF_PARAM_BITMASK_CONFIG_BLOB_PRESENT)
+	    		#if 1 /*idx38: report_mobility_req S */
+	    			if (p_rrc_e2sm_kpm_ric_sub_req->action_list[0].bitmask & E2AP_REPORT_MOBILITY)
 	    			{
-		    				p_device_config->rf_params.config_blob[0].length_a = 2;
-		    				/* p_device_config->rf_params.config_blob[0].data_a is an array primitive, assigning variale values */
-	    				p_device_config->rf_params.config_blob[0].data_a = {0x01, 0x02}; /* example for octet string array */
-		    				p_device_config->rf_params.config_blob[1].length_a = 2;
-		    				/* p_device_config->rf_params.config_blob[1].data_a is an array primitive, assigning variale values */
-	    				p_device_config->rf_params.config_blob[1].data_a = {0x01, 0x02}; /* example for octet string array */
+		    				p_rrc_e2sm_kpm_ric_sub_req->action_list[0].report_mobility_req.is_ho_attempt = 0;
+		    				p_rrc_e2sm_kpm_ric_sub_req->action_list[0].report_mobility_req.is_ho_succ = 0;
+		    				p_rrc_e2sm_kpm_ric_sub_req->action_list[0].report_mobility_req.is_ho_failure = 0;
 	    			}
-	    		#endif /* idx34: config_blob E */
+	    		#endif /* idx38: report_mobility_req E */
 	
+	    			p_rrc_e2sm_kpm_ric_sub_req->action_list[1].bitmask = 0;
+	    			p_rrc_e2sm_kpm_ric_sub_req->action_list[1].report_period_ms = 0;
+	    			p_rrc_e2sm_kpm_ric_sub_req->action_list[1].action_id = 0;
+	    			p_rrc_e2sm_kpm_ric_sub_req->action_list[1].action_type = 0;
+	    					p_rrc_e2sm_kpm_ric_sub_req->action_list[1].nr_cgi.plmn_identity.presence_bitmask = 0;
 	
-	    	#if 1 /*idx44: extra_data_config S */
-	    		if (p_device_config->bitmask & CONFIG_PRESENT)
-	    		{
-		    		p_device_config->extra_data_config = 0;
-	    		}
-	    	#endif /* idx44: extra_data_config E */
+	    				#if 1 /*idx60: mcc S */
+	    					if (p_rrc_e2sm_kpm_ric_sub_req->action_list[1].nr_cgi.plmn_identity.bitmask & PLMN_IDENTITY_MCC_PRESENCE_FLAG)
+	    					{
+		    					/* p_rrc_e2sm_kpm_ric_sub_req->action_list[1].nr_cgi.plmn_identity.mcc is an array primitive, assigning fixed values */
+	    					p_rrc_e2sm_kpm_ric_sub_req->action_list[1].nr_cgi.plmn_identity.mcc = {0x01, 0x02}; /* example for octet string array */
+	    					}
+	    				#endif /* idx60: mcc E */
 	
+	    						p_rrc_e2sm_kpm_ric_sub_req->action_list[1].nr_cgi.plmn_identity.mnc.count = 2;
+	    						/* p_rrc_e2sm_kpm_ric_sub_req->action_list[1].nr_cgi.plmn_identity.mnc.mnc is an array primitive, assigning variale values */
+	    						p_rrc_e2sm_kpm_ric_sub_req->action_list[1].nr_cgi.plmn_identity.mnc.mnc = {0x01, 0x02}; /* example for octet string array */
+	    					p_rrc_e2sm_kpm_ric_sub_req->action_list[1].nr_cgi.nr_cell_identity.numbits = 2;
+	    					/* p_rrc_e2sm_kpm_ric_sub_req->action_list[1].nr_cgi.nr_cell_identity.data is an array primitive, assigning variale values */
+	    					p_rrc_e2sm_kpm_ric_sub_req->action_list[1].nr_cgi.nr_cell_identity.data = {0x01, 0x02}; /* example for octet string array */
 	
-	    	#if 1 /*idx46: extra_data S */
-	    		if (p_device_config->bitmask & DEVICE_CONFIG_BITMASK_EXTRA_DATA_PRESENT)
-	    		{
-		    			p_device_config->extra_data[0].length_a = 2;
-		    			/* p_device_config->extra_data[0].data_a is an array primitive, assigning variale values */
-	    			p_device_config->extra_data[0].data_a = {0x01, 0x02}; /* example for octet string array */
-		    			p_device_config->extra_data[1].length_a = 2;
-		    			/* p_device_config->extra_data[1].data_a is an array primitive, assigning variale values */
-	    			p_device_config->extra_data[1].data_a = {0x01, 0x02}; /* example for octet string array */
-	    		}
-	    	#endif /* idx46: extra_data E */
-	
-	    		p_device_config->band_count = 2;
-	    			p_device_config->band_data[0].bitmask = 0;
-	    			p_device_config->band_data[0].band_id = 1;
-	    			p_device_config->band_data[0].frequency = 3000;
-	
-	    		#if 1 /*idx66: optional_param_id S */
-	    			if (p_device_config->band_data[0].bitmask & BAND_PARAM_BITMASK_OPTIONAL_PARAM_ID_PRESENT)
+	    		#if 1 /*idx74: report_mobility_req S */
+	    			if (p_rrc_e2sm_kpm_ric_sub_req->action_list[1].bitmask & E2AP_REPORT_MOBILITY)
 	    			{
-		    			p_device_config->band_data[0].optional_param_id = 5;
+		    				p_rrc_e2sm_kpm_ric_sub_req->action_list[1].report_mobility_req.is_ho_attempt = 0;
+		    				p_rrc_e2sm_kpm_ric_sub_req->action_list[1].report_mobility_req.is_ho_succ = 0;
+		    				p_rrc_e2sm_kpm_ric_sub_req->action_list[1].report_mobility_req.is_ho_failure = 0;
 	    			}
-	    		#endif /* idx66: optional_param_id E */
+	    		#endif /* idx74: report_mobility_req E */
 	
-	
-	    		#if 1 /*idx68: optional_param_data S */
-	    			if (p_device_config->band_data[0].bitmask & BAND_PARAM_BITMASK_OPTIONAL_PARAM_DATA_PRESENT)
-	    			{
-		    			p_device_config->band_data[0].optional_param_data = 127;
-	    			}
-	    		#endif /* idx68: optional_param_data E */
-	
-	    			p_device_config->band_data[1].bitmask = 0;
-	    			p_device_config->band_data[1].band_id = 1;
-	    			p_device_config->band_data[1].frequency = 3000;
-	
-	    		#if 1 /*idx76: optional_param_id S */
-	    			if (p_device_config->band_data[1].bitmask & BAND_PARAM_BITMASK_OPTIONAL_PARAM_ID_PRESENT)
-	    			{
-		    			p_device_config->band_data[1].optional_param_id = 5;
-	    			}
-	    		#endif /* idx76: optional_param_id E */
-	
-	
-	    		#if 1 /*idx78: optional_param_data S */
-	    			if (p_device_config->band_data[1].bitmask & BAND_PARAM_BITMASK_OPTIONAL_PARAM_DATA_PRESENT)
-	    			{
-		    			p_device_config->band_data[1].optional_param_data = 127;
-	    			}
-	    		#endif /* idx78: optional_param_data E */
-	
-	    		/* p_device_config->list_id is an array primitive, assigning fixed values */
-	    		p_device_config->list_id = {0x01, 0x02}; /* example for octet string array */
-	    			p_device_config->plmn.plmn_count = 2;
-	    			/* p_device_config->plmn.data is an array primitive, assigning variale values */
-	    			p_device_config->plmn.data = {0x01, 0x02}; /* example for octet string array */
 	    return XNAP_SUCCESS;
 }

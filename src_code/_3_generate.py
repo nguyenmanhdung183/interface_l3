@@ -582,9 +582,17 @@ def emit_get_struct(field, field_path, registry, idx_gen, indent_lv):
     
     if field["is_array"]:
         size = field.get("array_size", 2)
+        length_ref = field.get("length_ref")
 
-        lines.append(f"{indent}for (int i = 0; i < {size}; i++)")
-        lines.append(f"{indent}{{")
+        
+        if field["description"].upper() == "FIXED":
+            lines.append(f"{indent}for (int i = 0; i < {size}; i++)")
+            lines.append(f"{indent}{{")
+            
+        if field["description"].upper() == "VARIABLE":
+            lines.append(f"{indent}for (int i = 0; i < {length_ref}; i++)")
+            lines.append(f"{indent}{{")
+            
 
         sub_path = f"{field_path}[i]"
 

@@ -1,5 +1,7 @@
-plmn_id_t
-band_parameters_t
-octet_string_t
-rf_parameters_t
-device_config_t
+rrc_mnc_t
+rrc_plmn_identity_t
+rrc_nr_cell_identity_t
+rrc_ncgi_t
+e2_report_mobility_req_t
+e2ap_ric_action_list_t
+rrc_e2sm_kpm_ric_sub_req_t

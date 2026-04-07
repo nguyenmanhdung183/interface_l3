@@ -115,7 +115,7 @@ typedef struct
 
 
 
-//==============
+//============== NEW ================================
 
 
 typedef struct
@@ -183,9 +183,9 @@ typedef struct
     UInt16 bitmask;  /*^ BITMASK ^*/
     UInt32 report_period_ms;  /*^ M, 0, N, 0, 0 ^*/
     UInt32 action_id; /*^ M, 0, N, 0, 0 ^*/
-    UInt8 action_type; /*^ M, 0, B, 0, 2 ^*/
+    UInt8 action_type; /*^ M, 0, L, 0, 0 ^*/
     rrc_ncgi_t nr_cgi; /*^ M, 0, N, 0, 0 ^*/
-    e2_report_mobility_req_t report_mobility_req; /*^ O, E2AP_REPORT_MOBILITY, OCTET_STRING, N, 0 ^*/
+    e2_report_mobility_req_t report_mobility_req; /*^ O, E2AP_REPORT_MOBILITY, N, 0, 0 ^*/
 
 } e2ap_ric_action_list_t;
 

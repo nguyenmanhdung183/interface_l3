@@ -1,8 +1,8 @@
 static 
 gnb_return_et
-gnb_il_parse_e2_report_mobility_req 
+gnb_il_parse_rrc_nr_cell_identity 
 (
-    e2_report_mobility_req_t * p_e2_report_mobility_req,
+    rrc_nr_cell_identity_t * p_rrc_nr_cell_identity,
     UInt8 * p_src,
     SInt32 length_left,
     SInt32 * p_length_read
