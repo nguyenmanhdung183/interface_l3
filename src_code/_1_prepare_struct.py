@@ -1,6 +1,4 @@
-import code
 import json
-import jinja2
 import os
 import re
 
