@@ -1,6 +1,8 @@
 import math
 from textwrap import indent
 
+from attrs import field
+
 from _2_make_excel import *
 import pandas as pd
 from collections import defaultdict
@@ -269,19 +271,19 @@ def handle_emit(field, field_path, registry, idx_gen, indent_lv):
     name = field["name"]
     indent = "\t" * indent_lv
     lines = []
-    # ===== START BLOCK =====
-    if present == "O":
-        lines.append(f"{indent}#if 1 /*idx{idx}: {name} - {data_type} - {range_check} --> S */")
-        #lines.append(f"{indent}{{")
-        #lines.append(f"{indent}\tif ({field_path}.bitmask & {bitmask})")
-        lines.append(f"{indent}\t{field_path}.bitmask |= {bitmask}")
-        lines.append(f"{indent}\t{{")
-        inner_lv = indent_lv + 2
-    else:
-        print_log_info(f"Processing mandatory field: {field_path}")
-        #lines.append(f"{indent}/* idx{idx}: {name} S */")
-        #lines.append(f"{indent}{{")
-        inner_lv = indent_lv + 1
+    # # ===== START BLOCK =====
+    # if present == "O":
+    #     lines.append(f"{indent}#if 1 /*idx{idx}: {name} - {data_type} - {range_check} --> S */")
+    #     #lines.append(f"{indent}{{")
+    #     #lines.append(f"{indent}\tif ({field_path}.bitmask & {bitmask})")
+    #     lines.append(f"{indent}\t{field_path}.bitmask |= {bitmask}")
+    #     lines.append(f"{indent}\t{{")
+    #     inner_lv = indent_lv + 2
+    # else:
+    #     print_log_info(f"Processing mandatory field: {field_path}")
+    #     #lines.append(f"{indent}/* idx{idx}: {name} S */")
+    #     #lines.append(f"{indent}{{")
+    #     inner_lv = indent_lv + 1
         
         
         
@@ -298,14 +300,14 @@ def handle_emit(field, field_path, registry, idx_gen, indent_lv):
 
 
     # ===== CLOSE =====
-    if present == "O":
-        lines.append(f"{indent}\t}}")
-        #lines.append(f"{indent}}}")
-        lines.append(f"{indent}#endif /* idx{idx}: {name} E */\n")
-    else:
-        print_log_info(f"Finished processing mandatory field: {field_path}")
-        #lines.append(f"{indent}}}")
-        #lines.append(f"{indent}/* idx{idx}: {name} E */\n")
+    # if present == "O":
+    #     lines.append(f"{indent}\t}}")
+    #     #lines.append(f"{indent}}}")
+    #     lines.append(f"{indent}#endif /* idx{idx}: {name} E */\n")
+    # else:
+    #     print_log_info(f"Finished processing mandatory field: {field_path}")
+    #     #lines.append(f"{indent}}}")
+    #     #lines.append(f"{indent}/* idx{idx}: {name} E */\n")
     
     return lines
     
@@ -431,9 +433,16 @@ def emit_struct_hardcode(struct_name, struct_def, registry, path, idx_gen, inden
         present = field.get("present")
         bitmask = field.get("bitmask")
 
+        if present == "O":
+            lines.append(f"\n{indent}#if 1 /*idx{idx}: {name} S */")
+            lines.append(f"{indent}\tif ({path}.bitmask & {bitmask})")
+            lines.append(f"{indent}\t{{")
+            #inner_lv = indent_lv + 2
+
         field_path = f"{path}.{name}"
         indent = "\t" * indent_lv
         inner_lv = indent_lv + 1
+        
         # # ===== START BLOCK =====
         # if present == "O":
         #     lines.append(f"{indent}#if 1 /*idx{idx}: {name} S */")
@@ -450,6 +459,10 @@ def emit_struct_hardcode(struct_name, struct_def, registry, path, idx_gen, inden
         body = handle_emit(field, field_path, registry, idx_gen, inner_lv)
         lines.extend(body)
 
+        if present == "O":
+            lines.append(f"{indent}\t}}")
+            lines.append(f"{indent}#endif /* idx{idx}: {name} E */\n")
+        
         # # ===== CLOSE =====
         # if present == "O":
         #     lines.append(f"{indent}\t}}")
@@ -516,7 +529,7 @@ def emit_get_primitive(field, field_path, indent_lv):
     is_array = field["is_array"]
     range_check = str(field.get("range_check")).upper()
     desc = str(field.get("description")).upper()
-
+    field_path = f"{field_path}.{field['name']}"
     # ===== OCTET STRING =====
     if range_check == "OCTET_STRING":
         if desc == "FIXED":
@@ -557,7 +570,16 @@ def emit_get_struct(field, field_path, registry, idx_gen, indent_lv):
 
     child = field["child_type"]
     child_def = registry["struct_hc"][child]
-
+    
+    present = field.get("present")
+    bitmask = field.get("bitmask")
+    
+    if present == "O":
+        lines.append(f"\n{indent}if ({field_path}.bitmask & {bitmask})")
+        lines.append(f"{indent}{{")
+        
+    field_path = f"{field_path}.{field['name']}"
+    
     if field["is_array"]:
         size = field.get("array_size", 2)
 
@@ -589,7 +611,8 @@ def emit_get_struct(field, field_path, registry, idx_gen, indent_lv):
                 indent_lv
             )
         )
-
+    if present == "O":
+         lines.append(f"{indent}}}")
     return lines
 
 
@@ -598,19 +621,21 @@ def handle_get(field, field_path, registry, idx_gen, indent_lv):
     data_type = field["data_type"]
     present = field.get("present")
     bitmask = field.get("bitmask")
-
+    
     indent = "\t" * indent_lv
     next(idx_gen)
 
     lines = []
+    
+    inner_lv = indent_lv
 
     # ===== OPTIONAL =====
-    if present == "O":
-        lines.append(f"{indent}if ({field_path}.bitmask & {bitmask})")
-        lines.append(f"{indent}{{")
-        inner_lv = indent_lv + 1
-    else:
-        inner_lv = indent_lv
+    # if present == "O":
+    #     lines.append(f"{indent}if ({field_path}.bitmask & {bitmask})")
+    #     lines.append(f"{indent}{{")
+    #     inner_lv = indent_lv + 1
+    # else:
+    #     inner_lv = indent_lv
 
     # ===== DISPATCH =====
     if data_type == "PRIMITIVE":
@@ -623,8 +648,8 @@ def handle_get(field, field_path, registry, idx_gen, indent_lv):
         lines.append(f'{indent}fprintf(stderr, "[TRACE] UNKNOWN: {field_path}\\n");')
 
     # ===== CLOSE OPTIONAL =====
-    if present == "O":
-        lines.append(f"{indent}}}")
+    # if present == "O":
+    #     lines.append(f"{indent}}}")
 
     return lines
 
@@ -637,7 +662,8 @@ def emit_struct_trace(struct_name, struct_def, registry, path, idx_gen, indent_l
     lines.append(f'{indent}fprintf(stderr, "\\n[TRACE] ===== {struct_name} =====\\n");')
 
     for field in struct_def["fields"]:
-        field_path = f"{path}.{field['name']}"
+        #field_path = f"{path}.{field['name']}"
+        field_path = f"{path}"
         lines.extend(handle_get(field, field_path, registry, idx_gen, indent_lv))
 
     return lines

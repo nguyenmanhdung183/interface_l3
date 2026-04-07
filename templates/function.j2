@@ -28,17 +28,17 @@ gnb_xxx_il_send_yyyy_{{parent_stripped}}
     GNB_CP_TRACE(GNB_INFO, "Src(%u)->Dst(%u):{{parent_stripped | upcase}}", src_module_id, dest_module_id);
 
 
-    msg_appi_length = msg_length + GNB_API_HEADER_SIZE + GNB_INTERFACE_API_HEADER_SIZE;
+    msg_api_length = msg_length + GNB_API_HEADER_SIZE + GNB_INTERFACE_API_HEADER_SIZE;
 
     /*Alloc buffer*/
-    p_msg = gnb_msg_mem_get(msg_appi_length);
+    p_msg = gnb_msg_mem_get(msg_api_length);
     if (p_msg == GNB_PNULL)
     {
         GNB_LOG_ERROR("Failed to allocate memory for {{parent_stripped}} message");
         return GNB_FAILURE;
     }
 
-    memset_wrapper(p_msg, 0, msg_appi_length);
+    memset_wrapper(p_msg, 0, msg_api_length);
     p_xxx_msg = p_msg;
 
     /* fill cspl header */
