@@ -110,3 +110,105 @@ typedef struct
     UInt32 ric_request_id; /*^ M, 0, N, 0, 0 ^*/
     e2_report_mobility_ind_t report_mobility_ind; /*^ O, IND_RIC_MOBILITY_REPORT_PRESENT, N, 0, 0 ^*/
 } e2sm_rrc_ric_indication_t;
+
+
+
+
+
+//==============
+
+
+typedef struct
+{
+    UInt8 count;                  /*^ M, 0, B, 2, MAX_MNC_OCTET_SIZE ^*/
+    UInt8 mnc[MAX_MNC_OCTET_SIZE]; /*^ M, 0, OCTET_STRING, VARIABLE, H, 0, 9 ^*/
+} rrc_mnc_t;
+
+
+#define PLMN_IDENTITY_MCC_PRESENCE_FLAG 0x01
+
+typedef struct _rrc_plmn_identity_t
+{
+    UInt16 presence_bitmask;      /*^ BITMASK ^*/
+    UInt8  mcc[MCC_OCTET_SIZE];   /*^ O, PLMN_IDENTITY_MCC_PRESENCE_FLAG, OCTET_STRING, FIXED, H, 0, 9 ^*/
+    rrc_mnc_t mnc;                /*^ M, 0, N, 0, 0 ^*/
+} rrc_plmn_identity_t;
+
+
+typedef struct _rrc_nr_cell_identity_t
+{
+    UInt32 numbits;  /*^ M, 0, N, 0, 0 ^*/
+    UInt8 data[5]; /*^ M, 0, OCTET_STRING, VARIABLE, 0, 0 ^*/ /*^ numbits ^*/
+} rrc_nr_cell_identity_t;
+
+
+typedef struct _rrc_ncgi_t
+{
+    /* PLMN Identity */
+    rrc_plmn_identity_t plmn_identity; /*^ M, 0, N, 0, 0 ^*/
+
+    /* NR Cell Identity */
+    rrc_nr_cell_identity_t nr_cell_identity; /*^ M, 0, N, 0, 0 ^*/
+
+} rrc_ncgi_t;
+
+#define E2AP_REPORT_MOBILITY 0x01
+#define E2AP_REPORT_QoS      0x02
+
+typedef enum{
+    E2AP_ACTION_TYPE_REPORT = 0,
+    E2AP_ACTION_TYPE_INSERT = 1,
+    E2AP_ACTION_TYPE_POLICY = 2
+} e2ap_ric_action_type_t;
+
+
+typedef struct
+{
+    UInt32 ho_attempt; /*^ M, 0, N, 0, 0 ^*/
+    UInt32 ho_succ; /*^ M, 0, N, 0, 0 ^*/
+    UInt32 ho_failure; /*^ M, 0, N, 0, 0 ^*/
+} e2_report_mobility_ind_t;
+
+
+typedef struct
+{
+    UInt8 is_ho_attempt; /*^ M, 0, B, 0, 1 ^*/
+    UInt8 is_ho_succ; /*^ M, 0, B, 0, 1 ^*/
+    UInt8 is_ho_failure; /*^ M, 0, B, 0, 1 ^*/
+} e2_report_mobility_req_t;
+
+
+typedef struct
+{
+    UInt16 bitmask;  /*^ BITMASK ^*/
+    UInt32 report_period_ms;  /*^ M, 0, N, 0, 0 ^*/
+    UInt32 action_id; /*^ M, 0, N, 0, 0 ^*/
+    UInt8 action_type; /*^ M, 0, B, 0, 2 ^*/
+    rrc_ncgi_t nr_cgi; /*^ M, 0, N, 0, 0 ^*/
+    e2_report_mobility_req_t report_mobility_req; /*^ O, E2AP_REPORT_MOBILITY, OCTET_STRING, N, 0 ^*/
+
+} e2ap_ric_action_list_t;
+
+
+
+
+// typedef struct
+// {
+//     UInt16 bitmask;
+//     UInt32 action_id; 
+//     rrc_ncgi_t nr_cgi;
+//     e2_report_mobility_ind_t report_mobility_ind;
+
+// } e2ap_ric_action_list_ind_t;
+
+
+/* API: RRC_E2SM_KPM_RIC_SUB_REQ */
+typedef struct
+{
+    UInt32 ric_request_id; /*^ M, 0, N, 0, 0 ^*/
+    UInt16 ran_function_id; /*^ M, 0, N, 0, 0 ^*/
+    UInt8  num_action; /*^ M, 0, N, 0, 0 ^*/
+    UInt8  periodic;  /*^ M, 0, N, 0, 0 ^*/
+    e2ap_ric_action_list_t action_list[ACTION_MAX]; /*^ M, 0, OCTET_STRING, VARIABLE, 0, 0 ^*/ /*^ num_action ^*/
+
+} rrc_e2sm_kpm_ric_sub_req_t;
